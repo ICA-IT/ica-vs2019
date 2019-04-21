@@ -50,3 +50,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# other opsi related files
+*.opsi
+*.md5
+*.zsync
+*.cab
+*.wim
+*.msi
+*.zip
+*.com
+*.sys
+*.res
