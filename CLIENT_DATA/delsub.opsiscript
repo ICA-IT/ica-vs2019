@@ -1,0 +1,170 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+include_append "%ScriptPath%\check_msi_exitcode.opsiscript"
+DefVar $InstallerDir$
+DefVar $InstallerProgram$
+DefVar $GitUninstallerDir$
+DefVar $GitUninstallerProg$
+DefVar $MsiCRTx86$
+DefVar $MsiCRTx64$
+DefVar $MsiVCR2019x64Add$
+DefVar $MsiVCR2019x64Min$
+DefVar $MsiVCR2019x86Add$
+DefVar $MsiVCR2019x86Min$
+DefVar $MsiSDK2019AddOn$
+
+DefVar $found$
+DefVar $UninstallProgram$
+DefVar $UninstallGitProgram$
+DefVar $keep_installer$
+DefVar $keep_files$
+DefVar $InstallPath$
+
+Set $found$     = "false"
+Set $MsiId$     = ''
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+set $keep_installer$ = GetProductProperty("keep_installer","true")
+set $keep_files$ = GetProductProperty("keep_files","true")
+Set $InstallerDir$    = "Microsoft Visual Studio\Installer"
+Set $InstallerProgram$    = "vs_installer.exe"
+
+Set $GitUninstallerDir$  =  "%ProgramFiles64Dir%\Git" 
+Set $GitUninstallerProg$  =  "unins000.exe"
+; Universtal CRT Tools x86
+Set $MsiCRTx86$  =  "{3B588BBE-EB02-D1B2-5CD5-7DB85AD8A3E7}"
+; Universtal CRT Tools x64
+Set $MsiCRTx64$  =  "{d2dc1edf-ee04-9b5f-bdd7-06645d859ec3}"
+; Microsoft Visual C++ 2019 X64 Additional Runtime - 14.20.27508
+Set $MsiVCR2019x64Add$  =  "{4931385B-094D-4DC5-BD6A-5188FE9C51DF}"
+; Microsoft Visual C++ 2019 X64 Minimum Runtime - 14.20.27508
+Set $MsiVCR2019x64Min$  =  "{F3241984-5A0E-4632-9025-AA16E0780A4B}"
+; Microsoft Visual C++ 2019 X86 Additional Runtime - 14.20.27508
+Set $MsiVCR2019x86Add$  =  "{c9de51f8-7846-4621-815d-e8afd3e3c0ff}"
+; Microsoft Visual C++ 2019 X86 Minimum Runtime - 14.20.27508
+Set $MsiVCR2019x86Min$  =  "{b96f6fa1-530f-42f1-9f71-33c583716340}"
+; Windows SDK AddOn	10.1.0.0
+Set $MsiSDK2019AddOn$  =  "{1E76DFA7-96F3-4281-8E41-8A226C3E42EE}"
+
+
+; uninstall Visual Studio
+if ($SetupType$ = "" )   
+   if (GetSystemtype = "64 Bit System")
+      Set $UninstallProgram$ = "%ProgramFiles32Dir%" + "\" + $InstallerDir$ + "\" + $InstallerProgram$
+      if FileExists($UninstallProgram$)
+         comment "Visual Studio x86 Installer program found, starting uninstall"
+         Set $found$ = "true"
+         Set $InstallPath$ = "%ProgramFiles32Dir%" + "\" + $InstallDir$
+         Winbatch_uninstall_vs /WaitForProcessEnding "vs_installer.exe" 
+;         sub_check_exitcode
+      endif
+   endif
+   if ($found$ = "false")
+      Set $UninstallProgram$ = "%ProgramFiles64Dir%" + "\" + $InstallerDir$ + "\" + $InstallerProgram$
+      if FileExists($UninstallProgram$)
+         comment "Visual Studio Installer program found, starting uninstall"
+         Set $found$ = "true"
+         Set $InstallPath$ = "%ProgramFiles64Dir%" + "\" + $InstallDir$
+         Winbatch_uninstall_vs /WaitForProcessEnding "vs_installer.exe" 
+;         sub_check_exitcode
+      endif
+   endif
+endif
+if ($found$ = "false")
+    comment "Visual Studio Installer not found"
+endif
+
+; uninstall Git
+if ($SetupType$ = "")
+   Set $UninstallGitProgram$ = $GitUninstallerDir$ + "\" + $GitUninstallerProg$
+   if (not($GitUninstallerProg$ = '')) and FileExists($UninstallGitProgram$)
+      comment "Git Uninstall program found, starting uninstall"
+      Winbatch_uninstall_git
+      sub_check_exitcode
+   endif
+endif
+
+; uninstall CRT Tools - ignore failures
+if ($SetupType$ = "")
+      comment "Uninstall CRT"
+      Winbatch_uninstall_CRT
+;      sub_check_exitcode
+endif
+
+; uninstall Visual C Run Time Redistributable libraries - ignore failures
+if ($SetupType$ = "")
+      comment "Visual 2019 C Run Time Redistributable libraries"
+      Winbatch_uninstall_VCRTs
+;      sub_check_exitcode
+endif
+
+; uninstall Windows SDK Addons  - ignore failures
+if ($SetupType$ = "")
+      comment "Uninstall program found, starting uninstall"
+      Winbatch_uninstall_SDK_Addons
+;      sub_check_exitcode
+endif
+
+; uninstall Visual Studio Installer
+Set $found$ = "false"
+if ($keep_installer$ = "false" )   
+   if (GetSystemtype = "64 Bit System")
+      Set $UninstallProgram$ = "%ProgramFiles32Dir%" + "\" + $InstallerDir$ + "\" + $InstallerProgram$
+      if FileExists($UninstallProgram$)
+         comment "Visual Studio x86 Installer program found, starting uninstall"
+         Set $found$ = "true"
+         Winbatch_uninstall_vsInstaller /WaitForProcessEnding "vs_installer.exe"
+         sub_check_exitcode
+      endif
+   endif
+   if ($found$ = "false")
+      Set $UninstallProgram$ = "%ProgramFiles64Dir%" + "\" + $InstallerDir$ + "\" + $InstallerProgram$
+      if FileExists($UninstallProgram$)
+         comment "Visual Studio Installer program found, starting uninstall"
+         Set $found$ = "true"
+         Winbatch_uninstall_vsInstaller /WaitForProcessEnding "vs_installer.exe"
+         sub_check_exitcode
+      endif
+   endif
+endif
+
+
+; clean up any leftovers
+if ($keep_files$ = "false" ) and (not($InstallDir$ = "not used"))
+   Files_uninstall
+endif
+
+;-----------------------------------------------------
+
+[Winbatch_uninstall_vs]
+"$UninstallProgram$" uninstall --InstallPath "$InstallPath$" --passive --NoUpdateInstaller --norestart --noweb
+
+[Winbatch_uninstall_git]
+"$UninstallGitProgram$" /SILENT
+
+[Winbatch_uninstall_CRT]
+msiexec /x $MsiCRTx86$  /quiet
+msiexec /x $MsiCRTx64$  /quiet
+
+[Winbatch_uninstall_VCRTs]
+msiexec /x $MsiVCR2019x64Add$  /quiet
+msiexec /x $MsiVCR2019x64Min$  /quiet
+msiexec /x $MsiVCR2019x86Add$  /quiet
+msiexec /x $MsiVCR2019x86Min$  /quiet
+
+[Winbatch_uninstall_SDK_Addons]
+msiexec /x $MsiSDK2019AddOn$  /quiet
+
+[Winbatch_uninstall_vsInstaller]
+"$UninstallProgram$" /uninstall --passive --NoUpdateInstaller
+
+;-----------------------------------------------------
+
+[Files_uninstall]
+del -sf "$InstallPath$\"
+
+;-----------------------------------------------------

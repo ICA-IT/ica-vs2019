@@ -1,0 +1,36 @@
+[Package]
+version: 1
+depends: 
+incremental: False
+
+[Product]
+type: localboot
+id: ica-vs2019
+name: ICA-VS2019
+description: Visual Studio 2019 community edition. Install c++ native application and git options
+advice: 
+
+version: community__1630314748.1554796130
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: setup.opsiscript
+uninstallScript: uninstall.opsiscript
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript: 
+
+[ProductProperty]
+type: bool
+name: keep_installer
+description: Do not uninstall the Visual Studio Installer (no effect during setup) : true -> do not uninstall ; false -> uninstall
+default: False
+
+[Changelog]
+ica-vs2019 (community__1630314748.1554796130-1) stable; urgency=low
+
+	* initial: created by opsi-setup-detector
+
+ -- opsisetupdetector.exe <info@uib.de>  4/20/2019 9:39:36

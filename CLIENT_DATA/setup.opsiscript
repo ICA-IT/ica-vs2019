@@ -1,0 +1,108 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+; ----------------------------------------------------------------
+
+;****************************************
+; SETUPTYPE      msi
+;****************************************
+; PRODUCTID      ica-vs2019
+; SETUPFILE      vs_community__1630314748.1554796130.exe
+;****************************************
+; LICENSE        false     
+; PRODUCTDESC    Visual Studio 2019 community edition. Install c++ native application and git options
+
+; PRODUCTNAME    ICA-VS2019
+; PRODUCTSIZE    6 GB
+; PRODUCTVER     community__1630314748.1554796130
+;****************************************
+; SETUPSCRIPT    setup.opsiscript
+; UNINSSCRIPT    uninstall.opsiscript
+;****************************************
+; MSIID          {}
+; USE-MST        
+; INSTALLDIR     c:\Program Files (x86)\Microsoft Visual Studio\2019\Community
+;****************************************
+; TIMESTAMP      4/20/2019 9:39:36
+;****************************************
+
+[Actions]
+requiredWinstVersion >= "4.11.4.3"
+ScriptErrorMessages = false
+
+DefVar $SetupType$
+DefVar $ProductId$ 
+DefVar $Setupfile$ 
+DefVar $InstallDir$
+DefVar $MinimumSpace$
+DefVar $ExitCode$
+DefVar $ErrorMsg$
+DefVar $LicenseRequired$
+DefVar $LicenseKey$
+DefVar $LicensePool$
+DefVar $MsiId$
+DefVar $NsisInstallBatch$
+DefVar $LogDir$
+
+DefVar $LayoutPath$
+
+Set $LogDir$ = "%opsiLogDir%"
+
+include_append "%ScriptPath%\check_msi_exitcode.opsiscript"
+
+; ----------------------------------------------------------------
+Set $SetupType$       = ""
+; ----------------------------------------------------------------
+
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
+Set $ProductId$       = "ica-vs2019"
+Set $Setupfile$       = "vs_community__1630314748.1554796130.exe"
+Set $LayoutPath$      = "\\server\opsi_workbench\VS2019"
+; the path where we find the product after the installation
+Set $InstallDir$      = "Microsoft Visual Studio\2019\Community"
+Set $LicenseRequired$ = "false"
+Set $LicensePool$     = "p_" + $ProductId$
+Set $MsiId$           = ""
+Set $MinimumSpace$    = "6 GB"
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+   LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+   isFatalError "No Space"
+   ; Stop process and set installation status to failed
+else
+   comment "Show product picture"
+   ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+   if FileExists("%ScriptPath%\delsub.opsiscript")
+      comment "Start uninstall sub section"
+      Sub "%ScriptPath%\delsub.opsiscript"
+   endif
+   
+   Message "Installing " + $ProductId$ + " ..."
+   
+   comment "Start setup program"
+   ChangeDirectory "%SCRIPTPATH%"
+   ;----------------------------------------------
+   Winbatch_install_vs /WaitForProcessEnding "vs_installer.exe" 
+   ;----------------------------------------------
+   Sub_check_exitcode	
+endif
+
+
+; ----------------------------------------------------------------
+; install section
+; ----------------------------------------------------------------
+
+[Winbatch_install_vs]
+"$LayoutPath$\$Setupfile$" --passive --NoUpdateInstaller --norestart --noWeb --wait
+
+; ----------------------------------------------------------------
+
+
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+
