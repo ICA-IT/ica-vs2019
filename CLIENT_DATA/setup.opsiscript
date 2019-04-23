@@ -59,7 +59,7 @@ Set $SetupType$       = ""
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
 Set $ProductId$       = "ica-vs2019"
 Set $Setupfile$       = "vs_community__1630314748.1554796130.exe"
-Set $LayoutPath$      = "\\server\opsi_workbench\VS2019"
+Set $LayoutPath$      = "\\server\opsi_images\VS2019"
 ; the path where we find the product after the installation
 Set $InstallDir$      = "Microsoft Visual Studio\2019\Community"
 Set $LicenseRequired$ = "false"
