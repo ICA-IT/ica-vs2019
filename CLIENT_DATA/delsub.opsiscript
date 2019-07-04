@@ -32,6 +32,7 @@ set $keep_installer$ = GetProductProperty("keep_installer","true")
 set $keep_files$ = GetProductProperty("keep_files","true")
 Set $InstallerDir$    = "Microsoft Visual Studio\Installer"
 Set $InstallerProgram$    = "vs_installer.exe"
+Set $InstallPath$ = "not used"
 
 Set $GitUninstallerDir$  =  "%ProgramFiles64Dir%\Git" 
 Set $GitUninstallerProg$  =  "unins000.exe"
@@ -134,7 +135,7 @@ endif
 
 
 ; clean up any leftovers
-if ($keep_files$ = "false" ) and (not($InstallDir$ = "not used"))
+if ($keep_files$ = "false" ) and (not($InstallDir$ = "not used")) and (not($InstallPath$ = "not used"))
    Files_uninstall
 endif
 
