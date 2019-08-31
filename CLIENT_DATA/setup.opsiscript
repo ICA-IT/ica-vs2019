@@ -9,14 +9,14 @@
 ; SETUPTYPE      msi
 ;****************************************
 ; PRODUCTID      ica-vs2019
-; SETUPFILE      vs_community__1630314748.1554796130.exe
+; SETUPFILE      vs_community__1804629285.1543436600.exe
 ;****************************************
 ; LICENSE        false     
 ; PRODUCTDESC    Visual Studio 2019 community edition. Install c++ native application and git options
 
 ; PRODUCTNAME    ICA-VS2019
 ; PRODUCTSIZE    6 GB
-; PRODUCTVER     community__1630314748.1554796130
+; PRODUCTVER     community__1804629285.1543436600
 ;****************************************
 ; SETUPSCRIPT    setup.opsiscript
 ; UNINSSCRIPT    uninstall.opsiscript
@@ -58,7 +58,7 @@ Set $SetupType$       = ""
 
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
 Set $ProductId$       = "ica-vs2019"
-Set $Setupfile$       = "vs_community__1630314748.1554796130.exe"
+Set $Setupfile$       = "vs_community__1804629285.1543436600.exe"
 Set $LayoutPath$      = "\\server\opsi_images\VS2019"
 ; the path where we find the product after the installation
 Set $InstallDir$      = "Microsoft Visual Studio\2019\Community"

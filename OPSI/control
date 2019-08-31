@@ -8,7 +8,7 @@ id: ica-vs2019
 name: ICA-VS2019
 description: Visual Studio 2019 community edition. Install c++ native application and git options
 advice: 
-version: 1630314748.1554796130
+version: 1804629285.1543436600
 priority: 0
 licenseRequired: False
 productClasses: 
